@@ -1,5 +1,4 @@
 
-```markdown
 # RAG Document Search Application
 
 A modern React application for document ingestion and semantic search using RAGaaS (Retrieval Augmented Generation as a Service). Built with React 18, TypeScript, and Vite.
