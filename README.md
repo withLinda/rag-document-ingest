@@ -1,13 +1,3 @@
-Let me help you create a comprehensive README.md file for this codebase. I'll analyze the project structure and details carefully to ensure nothing important is missed.
-
-*Thinking through the key components...*
-
-1. First, I notice this is a React + TypeScript + Vite application focused on RAG (Retrieval Augmented Generation) functionality.
-2. The project has distinct features around document ingestion and search.
-3. There's environment configuration and API integration with a RAGaaS service.
-4. The codebase uses modern React patterns and TypeScript.
-
-*Let me start crafting the README while exploring each aspect thoroughly...*
 
 ```markdown
 # RAG Document Search Application
