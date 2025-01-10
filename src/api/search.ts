@@ -3,18 +3,22 @@ import type { SearchRequest, SearchResponse } from './types'
 
 export async function searchDocuments(params: SearchRequest): Promise<SearchResponse> {
   try {
-    // Simplified request body with exact parameter names
+    // Enhanced request body with corrected parameter names
     const requestBody = {
-      query: params.query,          // Changed from 'query' to 'text'
+      query: params.query,
       namespaceId: params.namespaceId,
-      topK: 10,
-      minScore: 0.0,              // Changed from scoreThreshold to minScore and lowered to 0
-      // Removed all filters for testing
+      topK: 15,                    // Increased from 10 for better coverage
+      scoreThreshold: 0.3,         // Corrected from minScore to scoreThreshold
+      searchType: "HYBRID",        // Explicitly set hybrid search
+      hybridConfig: {              // Added hybrid search configuration
+        semanticWeight: 0.65,      // Slightly reduced from default for better balance
+        keywordWeight: 0.35        // Slightly increased for better keyword matching
+      }
     }
 
     console.log('Search Request:', JSON.stringify(requestBody, null, 2))
 
-    const response = await fetch(`${api.baseUrl}/search`, {
+    const response = await fetch(`${api.baseUrl}/search/hybrid`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${api.key}`,
