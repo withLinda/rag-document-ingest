@@ -4,7 +4,7 @@ import type { IngestResponse, IngestStatus } from './types'
 // Main text ingestion function
 export async function ingestDocument(text: string): Promise<IngestResponse> {
   try {
-    const response = await fetch(`${api.baseUrl}/ingest/text`, {
+    const response = await fetch(`${api.baseUrl}/ingest/file`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${api.key}`,
