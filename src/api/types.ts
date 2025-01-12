@@ -39,6 +39,40 @@ export interface IngestStatus {
   data: ProcessingStatusData; // Using the common type
 }
 
+// Delete Types
+export interface DeleteFilterConfig {
+  documentIds: string[];
+  documentExternalIds: string[];
+  documentTypes: string[];
+  metadata?: Record<string, string>;
+}
+
+export interface DeleteRequest {
+  namespaceId: string;
+  filterConfig: DeleteFilterConfig;
+}
+
+export interface DeleteErrorDetails {
+  reason?: string;
+  errors?: Array<{
+    path: string[];
+    message: string;
+  }>;
+}
+
+export interface DeleteError {
+  code: string;
+  message: string;
+  details?: DeleteErrorDetails;
+}
+
+export interface DeleteResponse {
+  success: boolean;
+  message?: string;
+  data?: null;
+  error?: DeleteError;
+}
+
 // Search Types
 export interface SearchFilter {
   metadata?: Record<string, string>;
@@ -49,6 +83,8 @@ export interface SearchRequest {
   namespaceId: string;
   topK?: number;
   scoreThreshold?: number;
+  searchType?: SearchType;
+  hybridConfig?: HybridConfig;
   filter?: SearchFilter;
 }
 
@@ -63,29 +99,12 @@ export interface SearchResponse {
   data: {
     results: SearchResult[];
   };
-  error?: {
-    message: string;
-    code: string;
-  };
+  error?: DeleteError;
 }
-
-// src/api/types.ts
 
 export type SearchType = 'SEMANTIC' | 'HYBRID';
 
 export interface HybridConfig {
   semanticWeight: number;
   keywordWeight: number;
-}
-
-export interface SearchRequest {
-  query: string;
-  namespaceId: string;
-  topK?: number;
-  scoreThreshold?: number;
-  searchType?: SearchType;
-  hybridConfig?: HybridConfig;
-  filter?: {
-    metadata?: Record<string, string>;
-  };
 }
