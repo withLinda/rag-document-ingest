@@ -7,8 +7,8 @@ export async function searchDocuments(params: SearchRequest): Promise<SearchResp
     const requestBody = {
       query: params.query,
       namespaceId: params.namespaceId,
-      topK: 15,                    // Increased from 10 for better coverage
-      scoreThreshold: 0.3,         // Corrected from minScore to scoreThreshold
+      topK: 3,                    // Increased from 10 for better coverage
+      scoreThreshold: 0.5,         // Corrected from minScore to scoreThreshold
       searchType: "HYBRID",        // Explicitly set hybrid search
       hybridConfig: {              // Added hybrid search configuration
         semanticWeight: 0.65,      // Slightly reduced from default for better balance

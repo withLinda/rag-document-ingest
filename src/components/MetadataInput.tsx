@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
 
 interface MetadataInputProps {
   onChange: (metadata: Record<string, string>) => void;
@@ -9,7 +9,7 @@ interface MetadataInputProps {
 interface PredefinedMetadata {
   key: string;
   label: string;
-  type: 'text' | 'date' | 'select';
+  type: "text" | "date" | "select";
   required?: boolean;
   options?: string[];
   defaultValue?: string | (() => string);
@@ -17,59 +17,72 @@ interface PredefinedMetadata {
 
 const PREDEFINED_FIELDS: PredefinedMetadata[] = [
   {
-    key: 'docAuthor',
-    label: 'Document Author',
-    type: 'text',
+    key: "docAuthor",
+    label: "Document Author",
+    type: "text",
     required: true,
   },
   {
-    key: 'docType',
-    label: 'Document Type',
-    type: 'select',
+    key: "docType",
+    label: "Document Type",
+    type: "select",
     required: true,
-    options: ['pdf', 'text', 'article', 'url', 'other'],
+    options: ["pdf", "text", "article", "url", "other"],
   },
   {
-    key: 'docSection',
-    label: 'Document Section',
-    type: 'select',
+    key: "docSection",
+    label: "Document Section",
+    type: "select",
     required: true,
-    options: ['general-knowledge', 'code-documentation', 'book', 'book-summary', 'other'],
+    options: [
+      "general-knowledge",
+      "code-documentation",
+      "book",
+      "book-summary",
+      "other",
+    ],
   },
   {
-    key: 'docSubsection',
-    label: 'Document Subsection',
-    type: 'text',
+    key: "docSubsection",
+    label: "Document Subsection",
+    type: "text",
   },
   {
-    key: 'docID',
-    label: 'Document ID',
-    type: 'text',
+    key: "docID",
+    label: "Document ID",
+    type: "text",
     required: true,
-    defaultValue: `DOC-${Math.random().toString(36).slice(2, 11).toUpperCase()}`,
-  }
+  },
 ];
 
-export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputProps): ReactNode {
-  const [predefinedValues, setPredefinedValues] = useState<Record<string, string>>(() => {
+export function MetadataInput({
+  onChange,
+  initialMetadata = {},
+}: MetadataInputProps): ReactNode {
+  const [predefinedValues, setPredefinedValues] = useState<
+    Record<string, string>
+  >(() => {
     const defaults = PREDEFINED_FIELDS.reduce((acc, field) => {
-      acc[field.key] = typeof field.defaultValue === 'function'
-        ? field.defaultValue()
-        : field.defaultValue || '';
+      acc[field.key] =
+        typeof field.defaultValue === "function"
+          ? field.defaultValue()
+          : field.defaultValue || "";
       return acc;
     }, {} as Record<string, string>);
     return { ...defaults, ...initialMetadata };
   });
 
-  const [customFields, setCustomFields] = useState<Array<{ key: string; value: string }>>([]);
+  const [customFields, setCustomFields] = useState<
+    Array<{ key: string; value: string }>
+  >([]);
 
   useEffect(() => {
     const combinedMetadata = {
       ...predefinedValues,
       ...Object.fromEntries(
         customFields
-          .filter(field => field.key.trim() !== '')
-          .map(field => [field.key, field.value])
+          .filter((field) => field.key.trim() !== "")
+          .map((field) => [field.key, field.value])
       ),
     };
     onChange(combinedMetadata);
@@ -84,33 +97,33 @@ export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputP
 
         {/* Predefined Fields */}
         <div className="grid gap-6 md:grid-cols-2">
-          {PREDEFINED_FIELDS.map(field => (
+          {PREDEFINED_FIELDS.map((field) => (
             <div key={field.key} className="space-y-2">
               <label
                 htmlFor={field.key}
                 className="flex items-center gap-1 text-sm font-medium text-gray-700"
               >
                 {field.label}
-                {field.required && (
-                  <span className="text-red-500">*</span>
-                )}
+                {field.required && <span className="text-red-500">*</span>}
               </label>
 
-              {field.type === 'select' ? (
+              {field.type === "select" ? (
                 <select
                   id={field.key}
                   value={predefinedValues[field.key]}
-                  onChange={(e) => setPredefinedValues(prev => ({ 
-                    ...prev, 
-                    [field.key]: e.target.value 
-                  }))}
+                  onChange={(e) =>
+                    setPredefinedValues((prev) => ({
+                      ...prev,
+                      [field.key]: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg 
                            text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 
                            focus:border-transparent transition duration-200"
                   required={field.required}
                 >
                   <option value="">Select {field.label}</option>
-                  {field.options?.map(option => (
+                  {field.options?.map((option) => (
                     <option key={option} value={option}>
                       {option.charAt(0).toUpperCase() + option.slice(1)}
                     </option>
@@ -121,10 +134,12 @@ export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputP
                   type={field.type}
                   id={field.key}
                   value={predefinedValues[field.key]}
-                  onChange={(e) => setPredefinedValues(prev => ({ 
-                    ...prev, 
-                    [field.key]: e.target.value 
-                  }))}
+                  onChange={(e) =>
+                    setPredefinedValues((prev) => ({
+                      ...prev,
+                      [field.key]: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 
                            focus:outline-none focus:ring-2 focus:ring-blue-500 
                            focus:border-transparent transition duration-200"
@@ -142,7 +157,9 @@ export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputP
               Custom Fields
             </h4>
             <button
-              onClick={() => setCustomFields(prev => [...prev, { key: '', value: '' }])}
+              onClick={() =>
+                setCustomFields((prev) => [...prev, { key: "", value: "" }])
+              }
               className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg 
                        hover:bg-blue-700 active:bg-blue-800 transition duration-200"
             >
@@ -180,13 +197,26 @@ export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputP
                            focus:border-transparent"
                 />
                 <button
-                  onClick={() => setCustomFields(fields => fields.filter((_, i) => i !== index))}
+                  onClick={() =>
+                    setCustomFields((fields) =>
+                      fields.filter((_, i) => i !== index)
+                    )
+                  }
                   className="p-2 text-white bg-red-500 rounded-lg hover:bg-red-600 
                            active:bg-red-700 transition duration-200"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
