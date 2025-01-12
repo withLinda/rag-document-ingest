@@ -1,5 +1,6 @@
 import { DocumentIngest } from './components/DocumentIngest'
 import { DocumentSearch } from './components/DocumentSearch'
+import { DocumentDelete } from './components/DocumentDelete'
 
 function App() {
   return (
@@ -11,10 +12,10 @@ function App() {
 
         <DocumentIngest />
         <DocumentSearch />
+        <DocumentDelete />
       </div>
     </div>
   )
 }
 
 export default App
-
