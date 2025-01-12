@@ -1,41 +1,45 @@
 import { api } from './config'
 import type { IngestResponse, IngestStatus } from './types'
 
-// Main text ingestion function
-export async function ingestDocument(text: string): Promise<IngestResponse> {
+export async function ingestDocument(file: File, metadata: Record<string, string> = {}): Promise<IngestResponse> {
   try {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('namespaceId', api.namespaceId)
+
+    const ingestConfig = {
+      metadata: {
+        ...metadata,
+        fileType: file.type || 'application/octet-stream',
+        fileName: file.name,
+        uploadTimestamp: new Date().toISOString()
+      },
+      chunkConfig: {
+        chunkSize: 500,
+        chunkOverlap: 50
+      },
+      embeddingConfig: {
+        model: 'jina-embeddings-v3',
+        dimensions: 1024,
+        maxTokens: 8192
+      }
+    }
+
+    formData.append('config', JSON.stringify(ingestConfig))
+
     const response = await fetch(`${api.baseUrl}/ingest/file`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${api.key}`,
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${api.key}`
       },
-      body: JSON.stringify({
-        namespaceId: api.namespaceId,
-        ingestConfig: {
-          source: 'TEXT',
-          config: {
-            text,
-            metadata: {
-              source: 'text-upload',
-              timestamp: new Date().toISOString()
-            },
-            chunkConfig: {
-              chunkSize: 500,
-              chunkOverlap: 50
-            }
-          },
-        },
-      }),
+      body: formData
     })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null)
-      throw new Error(
-        `Ingest failed: ${response.status} ${
-          errorData ? JSON.stringify(errorData) : response.statusText
-        }`
-      )
+      const errorMessage = errorData ? JSON.stringify(errorData) : response.statusText
+      console.error('Ingest error details:', errorData)
+      throw new Error(`Document Ingest failed: ${response.status} ${errorMessage}`)
     }
 
     const ingestResponse = await response.json()
@@ -47,7 +51,7 @@ export async function ingestDocument(text: string): Promise<IngestResponse> {
 
     return ingestResponse
   } catch (error) {
-    console.error('Ingest error details:', error)
+    console.error('Document Ingest error:', error)
     throw error
   }
 }
@@ -102,7 +106,6 @@ export async function waitForCompletion(
           throw new Error(`Ingestion failed: ${status.data.error || 'Unknown error'}`)
         case 'PROCESSING':
         case 'PENDING':
-          // Continue waiting
           break
         default:
           console.warn(`Unknown status received: ${status.data.status}`)
@@ -119,72 +122,5 @@ export async function waitForCompletion(
   throw new Error('Operation timed out: Document processing took too long')
 }
 
-// PDF ingestion function
-export async function ingestPDF(file: File, metadata: Record<string, string> = {}): Promise<IngestResponse> {
-  try {
-    const formData = new FormData()
-    
-    // Basic configuration
-    formData.append('file', file)
-    formData.append('namespaceId', api.namespaceId)
-
-    // Enhanced configuration with embedding model details
-    const ingestConfig = {
-      metadata: {
-        ...metadata,
-        source: 'pdf-upload',
-        timestamp: new Date().toISOString()
-      },
-      chunkConfig: {
-        chunkSize: 500,
-        chunkOverlap: 50
-      },
-      embeddingConfig: {
-        model: 'jina-embeddings-v3',
-        dimensions: 1024,
-        maxTokens: 8192
-      }
-    }
-
-    formData.append('config', JSON.stringify(ingestConfig))
-
-    const response = await fetch(`${api.baseUrl}/ingest/file`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${api.key}`
-        // Don't set Content-Type with FormData
-      },
-      body: formData
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null)
-      const errorMessage = errorData ? JSON.stringify(errorData) : response.statusText
-      console.error('Ingest error details:', errorData)
-      throw new Error(`PDF Ingest failed: ${response.status} ${errorMessage}`)
-    }
-
-    const ingestResponse = await response.json()
-    
-    await waitForCompletion(
-      ingestResponse.data.ingestJobRunId,
-      (status) => console.log(`Processing status: ${status}`)
-    )
-
-    return ingestResponse
-  } catch (error) {
-    console.error('PDF Ingest error:', error)
-    throw error
-  }
-}
-
-// Utility function to verify complete ingestion status
-export async function verifyIngestion(jobId: string): Promise<boolean> {
-  try {
-    const status = await checkIngestStatus(jobId)
-    return status.data.status === 'COMPLETED'
-  } catch (error) {
-    console.error('Verification failed:', error)
-    return false
-  }
-}
+// Maintain backward compatibility
+export const ingestPDF = ingestDocument

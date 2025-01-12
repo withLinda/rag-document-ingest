@@ -47,14 +47,7 @@ const PREDEFINED_FIELDS: PredefinedMetadata[] = [
     type: 'text',
     required: true,
     defaultValue: `DOC-${Math.random().toString(36).slice(2, 11).toUpperCase()}`,
-  },
-  {
-    key: 'docPublishedDate',
-    label: 'Publication Date',
-    type: 'date',
-    required: true,
-    defaultValue: new Date().toISOString().split('T')[0],
-  },
+  }
 ];
 
 export function MetadataInput({ onChange, initialMetadata = {} }: MetadataInputProps): ReactNode {
