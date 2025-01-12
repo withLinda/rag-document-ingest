@@ -1,6 +1,7 @@
 # RAG Document Management System
+<img width="719" alt="Screenshot 2025-01-12 145233" src="https://github.com/user-attachments/assets/be11ee02-cf66-48d8-8193-8a6db288dea2" />
 
-A modern React application leveraging [RAGaaS (Retrieval Augmented Generation as a Service)](https://ragaas.dev) for intelligent document management and semantic search capabilities. This application provides a seamless interface for document ingestion, metadata management, and context-aware document retrieval.
+A modern React application leveraging [RAGaaS.dev)](https://ragaas.dev) for intelligent document management and semantic search capabilities. This application provides a seamless interface for document ingestion, metadata management, and context-aware document retrieval.
 
 ## 🌟 Features
 
